@@ -200,13 +200,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
   
-      // Adicionar imagem de cabeçalho (opcional)
-      // Ajuste o caminho, o tamanho e a posição conforme necessário
-      // Aqui vamos assumir que o arquivo "cabelhado.png" está na mesma pasta do index.html
-      // Tamanho ~21cm de largura (210mm) e 5cm de altura (50mm) - com pequenas margens
-      doc.addImage('cabelhado.png', 'PNG', 10, 10, 190, 40);
+      // Adicionar imagem de cabeçalho:
+      // Agora usamos o arquivo na pasta "images" com 21cm de largura (210mm) e 5cm de altura (50mm).
+      doc.addImage('images/cabelhado.png', 'PNG', 0, 0, 210, 50);
   
-      // Começamos o texto mais para baixo (y = 60) para dar espaço ao cabeçalho
+      // Começamos o texto abaixo do cabeçalho (y = 60)
       let y = 60;
   
       // Título
@@ -243,9 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
         y += 7;
         doc.setFont(undefined, 'normal');
   
-        // Descrição do plano (já convertida em texto puro)
+        // Descrição do plano (texto puro)
         const descricaoPlano = planDescriptions[pl] || "";
-        // Quebrar texto para não ultrapassar a margem (largura de 190 - 20 = 170mm, mas deixamos 180 para segurança)
+        // Quebrar o texto para não ultrapassar a margem
         const splitted = doc.splitTextToSize(descricaoPlano, 180);
         splitted.forEach(line => {
           doc.text(line, 10, y);
@@ -281,4 +279,3 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.save('orcamento.pdf');
     });
   });
-  
