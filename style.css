@@ -67,8 +67,8 @@ input::placeholder {
 
 /* Correção do fundo da lista de vendedores */
 select {
-    background-color: white; /* Fundo branco para a lista */
-    color: black; /* Texto preto para melhor visibilidade */
+    background-color: blue; /* Fundo branco para a lista */
+    color: white; /* Texto preto para melhor visibilidade */
     border: 1px solid #ccc;
     padding: 5px;
     font-size: 14px;
