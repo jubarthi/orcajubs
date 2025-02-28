@@ -199,27 +199,29 @@ document.addEventListener('DOMContentLoaded', function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
   
-      // Carregar a imagem do cabeçalho sem esticar: manter a proporção original
+      // Carregar a imagem de cabeçalho no tamanho natural (convertido de pixels para mm)
       const img = new Image();
       img.onload = function() {
-          // Obter as dimensões originais da imagem (em pixels)
-          const origWidth = img.naturalWidth;
-          const origHeight = img.naturalHeight;
-          // Definir as dimensões máximas desejadas (em mm)
-          const maxWidth = 210; // largura máxima da página A4
-          const maxHeight = 50;  // altura desejada para o cabeçalho (5cm)
-          // Calcular o fator de escala para não ultrapassar as dimensões máximas
-          const scale = Math.min(maxWidth / origWidth, maxHeight / origHeight);
-          const newWidth = origWidth * scale;
-          const newHeight = origHeight * scale;
-          // Centralizar horizontalmente: (largura da página - nova largura) / 2
-          const xPos = (210 - newWidth) / 2;
+          const conversionFactor = 0.264583; // mm por pixel
+          let newWidth = img.naturalWidth * conversionFactor;
+          let newHeight = img.naturalHeight * conversionFactor;
+          const pageWidth = 210; // largura da página A4 em mm
+  
+          // Se a imagem for maior que a página, escala proporcionalmente
+          if (newWidth > pageWidth) {
+              const scale = pageWidth / newWidth;
+              newWidth = pageWidth;
+              newHeight = newHeight * scale;
+          }
+  
+          // Centralizar horizontalmente
+          const xPos = (pageWidth - newWidth) / 2;
           const yPos = 10; // margem superior
-          
-          // Adiciona a imagem sem distorção
+  
+          // Adiciona a imagem sem distorção, usando seu tamanho natural (ou ajustado se for muito larga)
           doc.addImage(img, 'PNG', xPos, yPos, newWidth, newHeight);
   
-          // Iniciar o conteúdo abaixo do cabeçalho (depois de um espaçamento adicional)
+          // Definir o ponto de início do conteúdo abaixo da imagem (margem adicional de 10mm)
           let y = yPos + newHeight + 10;
   
           // Título
@@ -249,14 +251,12 @@ document.addEventListener('DOMContentLoaded', function() {
   
           doc.setFontSize(config.pdfTextFontSize);
           formData.planos.forEach(pl => {
-              // Nome do plano
               const nomePlano = pl.replace('_', ' ');
               doc.setFont(undefined, 'bold');
               doc.text(nomePlano, 10, y);
               y += 7;
               doc.setFont(undefined, 'normal');
   
-              // Descrição do plano (texto puro)
               const descricaoPlano = planDescriptions[pl] || "";
               const splitted = doc.splitTextToSize(descricaoPlano, 180);
               splitted.forEach(line => {
