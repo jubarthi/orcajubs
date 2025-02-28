@@ -196,86 +196,106 @@ document.addEventListener('DOMContentLoaded', function() {
   
     // Geração do PDF com jsPDF
     document.getElementById('btnFinalizar').addEventListener('click', function() {
-      // Iniciar jsPDF no formato retrato (p), unidade milímetros (mm) e A4
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
   
-      // Adicionar imagem de cabeçalho:
-      // Agora usamos o arquivo na pasta "images" com 21cm de largura (210mm) e 5cm de altura (50mm).
-      doc.addImage('images/cabelhado.png', 'PNG', 0, 0, 210, 50);
+      // Carregar a imagem do cabeçalho sem esticar: manter a proporção original
+      const img = new Image();
+      img.onload = function() {
+          // Obter as dimensões originais da imagem (em pixels)
+          const origWidth = img.naturalWidth;
+          const origHeight = img.naturalHeight;
+          // Definir as dimensões máximas desejadas (em mm)
+          const maxWidth = 210; // largura máxima da página A4
+          const maxHeight = 50;  // altura desejada para o cabeçalho (5cm)
+          // Calcular o fator de escala para não ultrapassar as dimensões máximas
+          const scale = Math.min(maxWidth / origWidth, maxHeight / origHeight);
+          const newWidth = origWidth * scale;
+          const newHeight = origHeight * scale;
+          // Centralizar horizontalmente: (largura da página - nova largura) / 2
+          const xPos = (210 - newWidth) / 2;
+          const yPos = 10; // margem superior
+          
+          // Adiciona a imagem sem distorção
+          doc.addImage(img, 'PNG', xPos, yPos, newWidth, newHeight);
   
-      // Começamos o texto abaixo do cabeçalho (y = 60)
-      let y = 60;
+          // Iniciar o conteúdo abaixo do cabeçalho (depois de um espaçamento adicional)
+          let y = yPos + newHeight + 10;
   
-      // Título
-      doc.setFontSize(config.pdfTitleFontSize);
-      doc.text("Orçamento", 10, y);
-      y += 10;
+          // Título
+          doc.setFontSize(config.pdfTitleFontSize);
+          doc.text("Orçamento", 10, y);
+          y += 10;
   
-      // Informações básicas
-      doc.setFontSize(config.pdfTextFontSize);
-      doc.text(`Vendedor: ${formData.vendedor}`, 10, y); 
-      y += 7;
-      doc.text(`Cliente: ${formData.clienteNome}`, 10, y);
-      y += 7;
-      doc.text(`Endereço: ${formData.endereco}, ${formData.cidade} - ${formData.estado}`, 10, y);
-      y += 7;
-      doc.text(`Especialidade: ${formData.especialidade}`, 10, y);
-      y += 7;
-      doc.text(`Data do Orçamento: ${formData.dataOrcamento}`, 10, y);
-      y += 7;
-      doc.text(`Validade: ${formData.validadeOrcamento}`, 10, y);
-      y += 10;
-  
-      // Planos Selecionados
-      doc.setFontSize(config.pdfSubtitleFontSize);
-      doc.text("Planos Selecionados:", 10, y);
-      y += 10;
-  
-      doc.setFontSize(config.pdfTextFontSize);
-      formData.planos.forEach(pl => {
-        // Nome do plano
-        const nomePlano = pl.replace('_', ' ');
-        doc.setFont(undefined, 'bold');
-        doc.text(nomePlano, 10, y);
-        y += 7;
-        doc.setFont(undefined, 'normal');
-  
-        // Descrição do plano (texto puro)
-        const descricaoPlano = planDescriptions[pl] || "";
-        // Quebrar o texto para não ultrapassar a margem
-        const splitted = doc.splitTextToSize(descricaoPlano, 180);
-        splitted.forEach(line => {
-          doc.text(line, 10, y);
+          // Informações básicas
+          doc.setFontSize(config.pdfTextFontSize);
+          doc.text(`Vendedor: ${formData.vendedor}`, 10, y); 
           y += 7;
-        });
-        y += 5;
-      });
+          doc.text(`Cliente: ${formData.clienteNome}`, 10, y);
+          y += 7;
+          doc.text(`Endereço: ${formData.endereco}, ${formData.cidade} - ${formData.estado}`, 10, y);
+          y += 7;
+          doc.text(`Especialidade: ${formData.especialidade}`, 10, y);
+          y += 7;
+          doc.text(`Data do Orçamento: ${formData.dataOrcamento}`, 10, y);
+          y += 7;
+          doc.text(`Validade: ${formData.validadeOrcamento}`, 10, y);
+          y += 10;
   
-      // Detalhes do Contrato
-      doc.setFontSize(config.pdfSubtitleFontSize);
-      doc.text("Detalhes do Contrato:", 10, y);
-      y += 10;
+          // Planos Selecionados
+          doc.setFontSize(config.pdfSubtitleFontSize);
+          doc.text("Planos Selecionados:", 10, y);
+          y += 10;
   
-      doc.setFontSize(config.pdfTextFontSize);
-      doc.text(`Duração do Contrato: ${formData.duracaoContrato}`, 10, y);
-      y += 7;
-      doc.text(`Posts por Semana: ${formData.postsSemana}`, 10, y);
-      y += 7;
-      doc.text(`Posts Estáticos por Semana: ${formData.postsEstaticos}`, 10, y);
-      y += 7;
-      doc.text(`Vídeos Pocket por Semana: ${formData.videosPocket}`, 10, y);
-      y += 7;
-      doc.text(`Valor do Contrato: R$ ${formData.valorContrato}`, 10, y);
-      y += 7;
+          doc.setFontSize(config.pdfTextFontSize);
+          formData.planos.forEach(pl => {
+              // Nome do plano
+              const nomePlano = pl.replace('_', ' ');
+              doc.setFont(undefined, 'bold');
+              doc.text(nomePlano, 10, y);
+              y += 7;
+              doc.setFont(undefined, 'normal');
   
-      // Destaque para o valor com desconto
-      doc.setFontSize(config.pdfValueFontSize);
-      doc.setTextColor(255, 0, 0);
-      doc.text(`Valor com Desconto: R$ ${formData.valorDesconto}`, 10, y);
-      doc.setTextColor(0, 0, 0);
+              // Descrição do plano (texto puro)
+              const descricaoPlano = planDescriptions[pl] || "";
+              const splitted = doc.splitTextToSize(descricaoPlano, 180);
+              splitted.forEach(line => {
+                  doc.text(line, 10, y);
+                  y += 7;
+              });
+              y += 5;
+          });
   
-      // Salvar PDF
-      doc.save('orcamento.pdf');
+          // Detalhes do Contrato
+          doc.setFontSize(config.pdfSubtitleFontSize);
+          doc.text("Detalhes do Contrato:", 10, y);
+          y += 10;
+  
+          doc.setFontSize(config.pdfTextFontSize);
+          doc.text(`Duração do Contrato: ${formData.duracaoContrato}`, 10, y);
+          y += 7;
+          doc.text(`Posts por Semana: ${formData.postsSemana}`, 10, y);
+          y += 7;
+          doc.text(`Posts Estáticos por Semana: ${formData.postsEstaticos}`, 10, y);
+          y += 7;
+          doc.text(`Vídeos Pocket por Semana: ${formData.videosPocket}`, 10, y);
+          y += 7;
+          doc.text(`Valor do Contrato: R$ ${formData.valorContrato}`, 10, y);
+          y += 7;
+  
+          // Destaque para o valor com desconto
+          doc.setFontSize(config.pdfValueFontSize);
+          doc.setTextColor(255, 0, 0);
+          doc.text(`Valor com Desconto: R$ ${formData.valorDesconto}`, 10, y);
+          doc.setTextColor(0, 0, 0);
+  
+          // Salvar PDF
+          doc.save('orcamento.pdf');
+      };
+      img.onerror = function() {
+          console.error("Erro ao carregar a imagem de cabeçalho.");
+          alert("Erro ao carregar a imagem de cabeçalho.");
+      };
+      img.src = 'images/cabelhado.png';
     });
-  });
+});
