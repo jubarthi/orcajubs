@@ -4,7 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Objeto global para armazenar os dados do formulário
     const formData = {};
   
-    // Carregar a lista de vendedores do arquivo dados/vendedores.html
+    // Objeto para armazenar a descrição (texto puro) de cada plano
+    const planDescriptions = {};
+  
+    // Listagem dos planos para facilitar o carregamento
+    const planos = ['gestao_criativa', 'gestao_trafego', 'gestao_completa', 'gestao_personalizada'];
+  
+    // 1. Carregar a lista de vendedores
     fetch('dados/vendedores.html')
       .then(response => response.text())
       .then(data => {
@@ -15,20 +21,26 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Erro ao carregar vendedores:', err);
       });
   
-    // Carregar as descrições dos planos dos arquivos na pasta planos/
-    const planos = ['gestao_criativa', 'gestao_trafego', 'gestao_completa', 'gestao_personalizada'];
+    // 2. Carregar a descrição dos planos e armazenar em planDescriptions
     planos.forEach(plano => {
       fetch(`planos/${plano}.html`)
         .then(response => response.text())
-        .then(data => {
-          document.getElementById(`desc_${plano}`).innerHTML = data;
+        .then(htmlContent => {
+          // Criamos um elemento temporário para "extrair" o texto puro
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = htmlContent;
+          // .textContent nos dá apenas o texto sem tags HTML
+          const textOnly = tempDiv.textContent.trim();
+          planDescriptions[plano] = textOnly;
+          // Exibe no DOM
+          document.getElementById(`desc_${plano}`).innerHTML = htmlContent;
         })
         .catch(err => {
           console.error(`Erro ao carregar o plano ${plano}:`, err);
         });
     });
   
-    // Definir a data padrão (hoje) e validade padrão
+    // 3. Definir data de hoje e validade padrão
     const hoje = new Date().toISOString().split('T')[0];
     document.getElementById('dataOrcamento').value = hoje;
     document.getElementById('validadeOrcamento').value = config.validadePadrao;
@@ -65,7 +77,15 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Por favor, preencha todos os campos.');
         return;
       }
-      Object.assign(formData, { clienteNome, endereco, estado, cidade, especialidade, dataOrcamento, validadeOrcamento });
+      Object.assign(formData, { 
+        clienteNome, 
+        endereco, 
+        estado, 
+        cidade, 
+        especialidade, 
+        dataOrcamento, 
+        validadeOrcamento 
+      });
       localStorage.setItem('formData', JSON.stringify(formData));
       showStep('step2', 'step3');
     });
@@ -108,19 +128,49 @@ document.addEventListener('DOMContentLoaded', function() {
       const valorContrato = document.getElementById('valorContrato').value;
       const valorDesconto = document.getElementById('valorDesconto').value;
   
-      if (!duracaoContrato || !postsSemana || !postsEstaticos || !videosPocket || !valorContrato || !valorDesconto) {
+      if (
+        !duracaoContrato || 
+        !postsSemana || 
+        !postsEstaticos || 
+        !videosPocket || 
+        !valorContrato || 
+        !valorDesconto
+      ) {
         alert('Por favor, preencha todos os campos.');
         return;
       }
-      Object.assign(formData, { duracaoContrato, postsSemana, postsEstaticos, videosPocket, valorContrato, valorDesconto });
+      Object.assign(formData, { 
+        duracaoContrato, 
+        postsSemana, 
+        postsEstaticos, 
+        videosPocket, 
+        valorContrato, 
+        valorDesconto 
+      });
       localStorage.setItem('formData', JSON.stringify(formData));
       generatePreview();
       showStep('step4', 'step5');
     });
   
-    // Função para gerar a pré-visualização do orçamento
+    // Pré-visualização do Orçamento (na tela)
     function generatePreview() {
       const preview = document.getElementById('previewOrcamento');
+      
+      // Montar texto dos planos selecionados + descrição
+      let planosHTML = '<ul>';
+      formData.planos.forEach(pl => {
+        // Nome do plano (ex: "gestao_criativa" -> "gestao criativa")
+        const nomeFormatado = pl.replace('_', ' ');
+        // Descrição pura (textContent) que armazenamos em planDescriptions
+        const descricao = planDescriptions[pl];
+        planosHTML += `
+          <li>
+            <strong>${nomeFormatado}:</strong> ${descricao}
+          </li>
+        `;
+      });
+      planosHTML += '</ul>';
+  
       preview.innerHTML = `
         <h2>Orçamento</h2>
         <p><strong>Vendedor:</strong> ${formData.vendedor}</p>
@@ -131,30 +181,42 @@ document.addEventListener('DOMContentLoaded', function() {
         <p><strong>Validade:</strong> ${formData.validadeOrcamento}</p>
         <hr>
         <h3>Planos Selecionados:</h3>
-        <ul>
-          ${formData.planos.map(plano => `<li>${plano.replace('_', ' ')}</li>`).join('')}
-        </ul>
+        ${planosHTML}
         <hr>
         <p><strong>Duração do Contrato:</strong> ${formData.duracaoContrato}</p>
         <p><strong>Posts por Semana:</strong> ${formData.postsSemana}</p>
         <p><strong>Posts Estáticos por Semana:</strong> ${formData.postsEstaticos}</p>
         <p><strong>Vídeos Pocket por Semana:</strong> ${formData.videosPocket}</p>
         <p><strong>Valor do Contrato:</strong> R$ ${formData.valorContrato}</p>
-        <p style="background: yellow; font-weight: bold;"><strong>Valor com Desconto:</strong> R$ ${formData.valorDesconto}</p>
+        <p style="background: yellow; font-weight: bold;">
+          <strong>Valor com Desconto:</strong> R$ ${formData.valorDesconto}
+        </p>
       `;
     }
   
     // Geração do PDF com jsPDF
     document.getElementById('btnFinalizar').addEventListener('click', function() {
+      // Iniciar jsPDF no formato retrato (p), unidade milímetros (mm) e A4
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      let y = 10;
+      const doc = new jsPDF('p', 'mm', 'a4');
+  
+      // Adicionar imagem de cabeçalho (opcional)
+      // Ajuste o caminho, o tamanho e a posição conforme necessário
+      // Aqui vamos assumir que o arquivo "cabelhado.png" está na mesma pasta do index.html
+      // Tamanho ~21cm de largura (210mm) e 5cm de altura (50mm) - com pequenas margens
+      doc.addImage('cabelhado.png', 'PNG', 10, 10, 190, 40);
+  
+      // Começamos o texto mais para baixo (y = 60) para dar espaço ao cabeçalho
+      let y = 60;
+  
+      // Título
       doc.setFontSize(config.pdfTitleFontSize);
       doc.text("Orçamento", 10, y);
       y += 10;
   
+      // Informações básicas
       doc.setFontSize(config.pdfTextFontSize);
-      doc.text(`Vendedor: ${formData.vendedor}`, 10, y);
+      doc.text(`Vendedor: ${formData.vendedor}`, 10, y); 
       y += 7;
       doc.text(`Cliente: ${formData.clienteNome}`, 10, y);
       y += 7;
@@ -167,19 +229,36 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.text(`Validade: ${formData.validadeOrcamento}`, 10, y);
       y += 10;
   
+      // Planos Selecionados
       doc.setFontSize(config.pdfSubtitleFontSize);
       doc.text("Planos Selecionados:", 10, y);
       y += 10;
-      doc.setFontSize(config.pdfTextFontSize);
-      formData.planos.forEach(plano => {
-        doc.text(`- ${plano.replace('_', ' ')}`, 10, y);
-        y += 7;
-      });
-      y += 5;
   
+      doc.setFontSize(config.pdfTextFontSize);
+      formData.planos.forEach(pl => {
+        // Nome do plano
+        const nomePlano = pl.replace('_', ' ');
+        doc.setFont(undefined, 'bold');
+        doc.text(nomePlano, 10, y);
+        y += 7;
+        doc.setFont(undefined, 'normal');
+  
+        // Descrição do plano (já convertida em texto puro)
+        const descricaoPlano = planDescriptions[pl] || "";
+        // Quebrar texto para não ultrapassar a margem (largura de 190 - 20 = 170mm, mas deixamos 180 para segurança)
+        const splitted = doc.splitTextToSize(descricaoPlano, 180);
+        splitted.forEach(line => {
+          doc.text(line, 10, y);
+          y += 7;
+        });
+        y += 5;
+      });
+  
+      // Detalhes do Contrato
       doc.setFontSize(config.pdfSubtitleFontSize);
       doc.text("Detalhes do Contrato:", 10, y);
       y += 10;
+  
       doc.setFontSize(config.pdfTextFontSize);
       doc.text(`Duração do Contrato: ${formData.duracaoContrato}`, 10, y);
       y += 7;
@@ -198,9 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.text(`Valor com Desconto: R$ ${formData.valorDesconto}`, 10, y);
       doc.setTextColor(0, 0, 0);
   
-      // Se houver logo, você pode adicioná-la aqui (exemplo comentado):
-      // doc.addImage('logo.png', 'PNG', 150, 10, 40, 20);
-  
+      // Salvar PDF
       doc.save('orcamento.pdf');
     });
   });
