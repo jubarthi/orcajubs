@@ -199,26 +199,22 @@ document.addEventListener('DOMContentLoaded', function() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
   
-      // Carregar a imagem de cabeçalho no tamanho natural (convertido de pixels para mm)
+      // Carregar a imagem de cabeçalho e dimensioná-la para ocupar toda a largura da página, mantendo a proporção
       const img = new Image();
       img.onload = function() {
           const conversionFactor = 0.264583; // mm por pixel
-          let newWidth = img.naturalWidth * conversionFactor;
-          let newHeight = img.naturalHeight * conversionFactor;
+          const naturalWidthMm = img.naturalWidth * conversionFactor;
+          const naturalHeightMm = img.naturalHeight * conversionFactor;
           const pageWidth = 210; // largura da página A4 em mm
+          const scale = pageWidth / naturalWidthMm; // sempre escalamos para preencher a largura
+          const newWidth = pageWidth;
+          const newHeight = naturalHeightMm * scale;
   
-          // Se a imagem for maior que a página, escala proporcionalmente
-          if (newWidth > pageWidth) {
-              const scale = pageWidth / newWidth;
-              newWidth = pageWidth;
-              newHeight = newHeight * scale;
-          }
-  
-          // Centralizar horizontalmente
-          const xPos = (pageWidth - newWidth) / 2;
+          // A imagem ocupará toda a largura; xPos = 0
+          const xPos = 0;
           const yPos = 10; // margem superior
-  
-          // Adiciona a imagem sem distorção, usando seu tamanho natural (ou ajustado se for muito larga)
+          
+          // Adiciona a imagem sem distorção
           doc.addImage(img, 'PNG', xPos, yPos, newWidth, newHeight);
   
           // Definir o ponto de início do conteúdo abaixo da imagem (margem adicional de 10mm)
