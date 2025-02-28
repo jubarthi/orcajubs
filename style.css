@@ -19,7 +19,7 @@ body {
 /* Contêiner centralizado com largura máxima */
 .container {
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     margin: auto;
 }
 
@@ -32,11 +32,19 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
-/* Títulos */
+/* Títulos e Subtítulos */
 h1 {
     font-size: 24px;
     color: white;
     margin-bottom: 10px;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+    margin-top: 10px;
 }
 
 /* Labels */
@@ -44,6 +52,7 @@ label {
     display: block;
     margin: 10px 0;
     color: white;
+    font-weight: bold;
 }
 
 /* Inputs e select */
@@ -59,6 +68,7 @@ select {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.1);
     color: white;
+    font-size: 16px;
 }
 
 input::placeholder {
@@ -67,8 +77,8 @@ input::placeholder {
 
 /* Correção do fundo da lista de vendedores */
 select {
-    background-color: blue; /* Fundo branco para a lista */
-    color: white; /* Texto preto para melhor visibilidade */
+    background-color: white; /* Fundo branco para a lista */
+    color: black; /* Texto preto para melhor visibilidade */
     border: 1px solid #ccc;
     padding: 5px;
     font-size: 14px;
@@ -105,6 +115,9 @@ select {
     animation: pulsate 1s infinite;
     color: white;
     box-shadow: 0 0 10px rgba(220, 53, 69, 0.7);
+    font-size: 18px;
+    font-weight: bold;
+    padding: 14px 22px;
 }
 
 @keyframes pulsate {
@@ -127,14 +140,30 @@ select {
 .pdf-container {
     padding-top: 5cm; /* Reserva espaço para o cabeçalho */
     width: 21cm; /* Mantém a largura do documento */
+    text-align: left;
+    font-size: 14px;
 }
 
-/* Descrição dos planos */
-.planoDescricao {
-    margin-left: 20px;
+/* Estilização para os textos no PDF */
+.pdf-container h1 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #002f6c;
+}
+
+.pdf-container p {
     font-size: 14px;
-    color: white;
-    margin-bottom: 10px;
+    color: black;
+}
+
+.pdf-container strong {
+    font-weight: bold;
+    color: #002f6c;
+}
+
+.pdf-container em {
+    font-style: italic;
+    color: #002f6c;
 }
 
 /* Responsividade para telas menores */
