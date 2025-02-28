@@ -202,13 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
       // Carregar a imagem de cabeçalho e dimensioná-la para ocupar toda a largura da página, mantendo a proporção
       const img = new Image();
       img.onload = function() {
-          const conversionFactor = 0.264583; // mm por pixel
-          const naturalWidthMm = img.naturalWidth * conversionFactor;
-          const naturalHeightMm = img.naturalHeight * conversionFactor;
-          const pageWidth = 210; // largura da página A4 em mm
-          const scale = pageWidth / naturalWidthMm; // sempre escalamos para preencher a largura
-          const newWidth = pageWidth;
-          const newHeight = naturalHeightMm * scale;
+        const conversionFactor = 0.264583; // mm por pixel
+        const naturalWidthMm = img.naturalWidth * conversionFactor;
+        const naturalHeightMm = img.naturalHeight * conversionFactor;
+        const pageWidth = 210; // largura da página A4 em mm (21cm)
+        const scale = pageWidth / naturalWidthMm; // escalamos para preencher a largura
+        const newWidth = pageWidth;
+        const newHeight = naturalHeightMm * scale;
+        
   
           // A imagem ocupará toda a largura; xPos = 0
           const xPos = 0;
