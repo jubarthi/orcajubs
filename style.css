@@ -1,0 +1,128 @@
+/* Reset e definição de altura total */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Corpo com fundo degradê de azul marinho para preto e centralização */
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, navy, black);
+    color: white;
+    padding: 20px;
+  }
+  
+  /* Contêiner centralizado com largura máxima */
+  .container {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  /* Estilo das janelas (seções) */
+  .step {
+    background: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+  }
+  
+  /* Títulos */
+  h1 {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  /* Labels */
+  label {
+    display: block;
+    margin: 10px 0;
+    color: white;
+  }
+  
+  /* Inputs e select */
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  /* Botões com efeito fluorescente e arredondados */
+  .btn {
+    background-color: #39FF14; /* Verde fluorescente */
+    color: black;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 15px;
+    position: relative;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 0 0 10px #39FF14;
+  }
+  
+  .btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px #39FF14;
+  }
+  
+  .btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 5px #39FF14;
+  }
+  
+  /* Botão final com efeito pulsante */
+  .btnFinalizar {
+    background-color: #dc3545;
+    animation: pulsate 1s infinite;
+    color: white;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.7);
+  }
+  
+  @keyframes pulsate {
+    0% { box-shadow: 0 0 10px rgba(220, 53, 69, 0.7); }
+    50% { box-shadow: 0 0 20px rgba(220, 53, 69, 1); }
+    100% { box-shadow: 0 0 10px rgba(220, 53, 69, 0.7); }
+  }
+  
+  /* Descrição dos planos */
+  .planoDescricao {
+    margin-left: 20px;
+    font-size: 14px;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  /* Responsividade para telas menores */
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 20px;
+    }
+    .btn {
+      font-size: 14px;
+      padding: 10px 16px;
+    }
+    .step {
+      padding: 15px;
+    }
+  }
+  

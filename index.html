@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Orçamentos</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- jsPDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Seção 1: Seleção do Vendedor -->
+    <section id="step1" class="step">
+      <h1>Selecione o Vendedor</h1>
+      <select id="vendedorSelect">
+        <option value="">Carregando vendedores...</option>
+      </select>
+      <br>
+      <button id="btnStep1" class="btn">Seguir</button>
+    </section>
+
+    <!-- Seção 2: Dados do Cliente -->
+    <section id="step2" class="step" style="display:none;">
+      <h1>Dados do Cliente</h1>
+      <label>Nome do Cliente:
+        <input type="text" id="clienteNome">
+      </label><br>
+      <label>Endereço:
+        <input type="text" id="endereco">
+      </label><br>
+      <label>Estado:
+        <input type="text" id="estado">
+      </label><br>
+      <label>Cidade:
+        <input type="text" id="cidade">
+      </label><br>
+      <label>Especialidade:
+        <input type="text" id="especialidade">
+      </label><br>
+      <label>Dia do Orçamento:
+        <input type="date" id="dataOrcamento">
+      </label><br>
+      <label>Validade do Orçamento:
+        <input type="text" id="validadeOrcamento" readonly>
+      </label><br>
+      <button id="btnStep2" class="btn">Seguir</button>
+    </section>
+
+    <!-- Seção 3: Seleção dos Planos -->
+    <section id="step3" class="step" style="display:none;">
+      <h1>Selecione os Itens do Plano (Máximo 2)</h1>
+      <div>
+        <label>
+          <input type="checkbox" class="planoCheckbox" value="gestao_criativa">
+          Gestão Criativa
+        </label>
+        <div class="planoDescricao" id="desc_gestao_criativa"></div>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" class="planoCheckbox" value="gestao_trafego">
+          Gestão de Tráfego
+        </label>
+        <div class="planoDescricao" id="desc_gestao_trafego"></div>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" class="planoCheckbox" value="gestao_completa">
+          Gestão Completa
+        </label>
+        <div class="planoDescricao" id="desc_gestao_completa"></div>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" class="planoCheckbox" value="gestao_personalizada">
+          Gestão Personalizada
+        </label>
+        <div class="planoDescricao" id="desc_gestao_personalizada"></div>
+      </div>
+      <button id="btnStep3" class="btn">Seguir</button>
+    </section>
+
+    <!-- Seção 4: Detalhes do Contrato -->
+    <section id="step4" class="step" style="display:none;">
+      <h1>Detalhes do Contrato</h1>
+      <label>Duração do Contrato:
+        <input type="text" id="duracaoContrato">
+      </label><br>
+      <label>Quantidade de Posts por semana:
+        <input type="number" id="postsSemana">
+      </label><br>
+      <label>Quantidade de Posts Estáticos por semana:
+        <input type="number" id="postsEstaticos">
+      </label><br>
+      <label>Quantidade de Vídeos Pocket por semana:
+        <input type="number" id="videosPocket">
+      </label><br>
+      <label>Valor Acordado para o Contrato: R$
+        <input type="text" id="valorContrato">
+      </label><br>
+      <label>Valor com Desconto: R$
+        <input type="text" id="valorDesconto">
+      </label><br>
+      <button id="btnStep4" class="btn">Seguir</button>
+    </section>
+
+    <!-- Seção 5: Pré-visualização e Finalização -->
+    <section id="step5" class="step" style="display:none;">
+      <h1>Pré-visualização do Orçamento</h1>
+      <div id="previewOrcamento"></div>
+      <button id="btnFinalizar" class="btn btnFinalizar">Fechar Orçamento</button>
+    </section>
+  </div>
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
